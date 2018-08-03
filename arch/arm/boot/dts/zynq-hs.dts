@@ -12,9 +12,12 @@
 
 	aliases {
 		ethernet0 = &gem0;
+		ethernet1 = &gem1;
+
 		serial0 = &uart1;
 		spi0 = &qspi;
 		mmc0 = &sdhci0;
+		mmc1 = &sdhci1;
 	};
 
 	memory@0 {
@@ -41,14 +44,21 @@
 };
 
 &gem0 {
-	status = "okay";
-	phy-mode = "rgmii-id";
-	phy-handle = <&ethernet_phy>;
-
-	ethernet_phy: ethernet-phy@0 {
-		reg = <0>;
-		device_type = "ethernet-phy";
+		status = "okay";
+		phy-mode = "rgmii-id";
+		phy-handle = <&ethernet_phy>;
+		ethernet_phy: ethernet-phy@0 {
+			reg = <0>;
+			device_type = "ethernet-phy";
+		};
 	};
+
+&gem1 {
+	local-mac-address = [ 00 0a 35 00 00 01 ];
+
+	phy-mode = "gmii";
+	status = "okay";
+	xlnx,ptp-enet-clock = <0x69f6bcb>;
 };
 
 &qspi {
@@ -59,29 +69,29 @@
 	flash@0 {
 		compatible = "n25q128a11";
 		reg = <0x0>;
-		spi-tx-bus-width = <1>;
+		spi-tx-bus-width = <4>;
 		spi-rx-bus-width = <4>;
-		spi-max-frequency = <50000000>;
+		spi-max-frequency = <125000000>;
 		#address-cells = <1>;
 		#size-cells = <1>;
 		partition@qspi-fsbl-uboot {
-			label = "qspi-fsbl-uboot";
+			label = "qspi-fsbl-uboot-hs";
 			reg = <0x0 0x0F00000>;
 		};
 		partition@qspi-linux {
-			label = "qspi-linux";
+			label = "qspi-linux-hs";
 			reg = <0x0F00000 0x500000>;
 		};
 		partition@qspi-device-tree {
-			label = "qspi-device-tree";
+			label = "qspi-device-tree-hs";
 			reg = <0x1400000 0x20000>;
 		};
 		partition@qspi-rootfs {
-			label = "qspi-rootfs";
+			label = "qspi-rootfs-hs";
 			reg = <0x1420000 0x5E0000>;
 		};
 		partition@qspi-bitstream {
-			label = "qspi-bitstream";
+			label = "qspi-bitstream-hs";
 			reg = <0x1A00000 0x400000>;
 		};
 	};
@@ -90,7 +100,15 @@
 &sdhci0 {
 	u-boot,dm-pre-reloc;
 	status = "okay";
+   
 };
+
+&sdhci1 {
+	u-boot,dm-pre-reloc;
+	status = "okay";
+   
+};
+
 
 &uart1 {
 	u-boot,dm-pre-reloc;

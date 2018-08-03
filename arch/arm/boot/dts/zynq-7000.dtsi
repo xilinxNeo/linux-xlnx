@@ -264,6 +264,7 @@
 			clock-names = "pclk", "hclk", "tx_clk";
 			#address-cells = <1>;
 			#size-cells = <0>;
+			
 		};
 
 		sdhci0: sdhci@e0100000 {
